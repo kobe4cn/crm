@@ -1,1 +1,1 @@
-# Geektime Rust 语言训练营
+# Rust 语言
