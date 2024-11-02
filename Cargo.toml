@@ -1,6 +1,27 @@
 [workspace]
-members = ["crm"]
+members = ["crm", "user-state"]
 resolver = "2"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [workspace.dependencies]
+tonic = { version = "0.12.3", features = ["zstd", "tls"] }
+anyhow = "1.0.91"
+prost = "0.13.3"
+prost-build = "0.13.3"
+prost-types = "0.13.3"
+tonic-build = "0.12.3"
+sqlx = { version = "0.8.2", features = [
+    "postgres",
+    "runtime-tokio",
+    "tls-rustls-ring",
+    "chrono",
+] }
+tokio = { version = "1.41.0", features = [
+    "rt",
+    "rt-multi-thread",
+    "net",
+    "macros",
+    "io-util",
+] }
+serde = { version = "1.0.214", features = ["derive"] }
+chrono = { version = "0.4.38", features = ["serde"] }
+rand = "0.8.5"
