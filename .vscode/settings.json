@@ -1,0 +1,16 @@
+{
+    "sqltools.useNodeRuntime": true,
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "DuckDB",
+            "name": "state",
+            "database": "${workspaceFolder:crm}/user-state/state.db"
+        }
+    ],
+    "protoc": {
+        "options": [
+            "--proto_path=${workspaceFolder:crm}/protos",
+        ]
+    }
+}
