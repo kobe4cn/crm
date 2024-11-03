@@ -1,5 +1,5 @@
 [workspace]
-members = ["crm", "user-state"]
+members = ["crm", "crm-metadata", "crm-send", "user-state"]
 resolver = "2"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [workspace.dependencies]

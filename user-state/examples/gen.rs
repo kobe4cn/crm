@@ -15,22 +15,7 @@ use serde_json::json;
 use sqlx::{Executor, PgPool};
 
 //generate 10000 users and run them in a tx and repeat 500 times
-/*
-create table if NOT EXISTS user_stats(
-  email varchar(128) NOT NULL PRIMARY KEY,
-  name varchar(64) NOT NULL,
-  created_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  last_visited_at timestamptz NOT NULL,
-  last_watched_at timestamptz NOT NULL,
-  recent_watched int[],
-  viewed_but_not_started int[],
-  started_but_not_finished int[],
-  finished int[],
-  last_email_notification timestamptz NOT NULL,
-  last_in_app_notification timestamptz NOT NULL,
-  last_sms_notification timestamptz NOT NULL
-);
- */
+
 #[derive(Debug, Clone, Serialize, Deserialize, Dummy, sqlx::Type)]
 #[sqlx(type_name = "gender", rename_all = "lowercase")]
 #[serde(rename_all = "lowercase")]
@@ -132,39 +117,6 @@ async fn duckdb() -> Result<Connection> {
     Ok(conn)
 }
 
-// async fn insert_rows(user: &Vec<UserState>) -> Result<()> {
-//     let conn = Connection::open("state.db")?;
-//     conn.execute(
-//         r#"
-//         CREATE TABLE IF NOT EXISTS user_stats (
-//             email VARCHAR(128) NOT NULL PRIMARY KEY,
-//             name VARCHAR(64) NOT NULL,
-//             gender VARCHAR(16) DEFAULT 'unknown',
-//             created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-//             last_visited_at TIMESTAMPTZ,
-//             last_watched_at TIMESTAMPTZ,
-//             recent_watched JSON,
-//             viewed_but_not_started JSON,
-//             started_but_not_finished JSON,
-//             finished JSON,
-//             last_email_notification TIMESTAMPTZ,
-//             last_in_app_notification TIMESTAMPTZ,
-//             last_sms_notification TIMESTAMPTZ
-//         );
-//         "#,
-//         [],
-//     )?;
-//     for u in user {
-//         // println!("Inserting {}", u.email);
-//         conn.execute(
-//             "INSERT INTO user_stats(email,name,gender,created_at,last_visited_at,last_watched_at,recent_watched,viewed_but_not_started,started_but_not_finished,finished,last_email_notification,last_in_app_notification,last_sms_notification)
-//             VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
-//             params![u.email,u.name,u.gender.to_string(), u.created_at, u.last_visited_at, u.last_watched_at, json!(u.recent_watched).to_string(), json!(u.viewed_but_not_started).to_string(), json!(u.started_but_not_finished).to_string(), json!(u.finished).to_string(), u.last_email_notification, u.last_in_app_notification, u.last_sms_notification],
-//         )?;
-//     }
-//     Ok(())
-// }
-
 async fn batch_insert_rows(conn: &mut Connection, user: &[UserState]) -> Result<()> {
     let tx = conn.transaction()?;
     let mut stmt=tx.prepare("INSERT INTO user_stats(email,name,gender,created_at,last_visited_at,last_watched_at,recent_watched,viewed_but_not_started,started_but_not_finished,finished,last_email_notification,last_in_app_notification,last_sms_notification)
@@ -196,23 +148,7 @@ async fn pgsql(user: &[UserState]) -> Result<()> {
     bulk_insert(user, &pool).await?;
     Ok(())
 }
-/*
-create table if NOT EXISTS user_stats(
-  email varchar(128) NOT NULL PRIMARY KEY,
-  name varchar(64) NOT NULL,
-  gender gender DEFAULT 'unknown',
-  created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
-  last_visited_at timestamptz,
-  last_watched_at timestamptz,
-  recent_watched int [],
-  viewed_but_not_started int [],
-  started_but_not_finished int [],
-  finished int [],
-  last_email_notification timestamptz,
-  last_in_app_notification timestamptz,
-  last_sms_notification timestamptz
-);
-*/
+
 async fn bulk_insert(user: &[UserState], pool: &PgPool) -> Result<()> {
     let mut tx = pool.begin().await?;
     for u in user.iter().cloned() {

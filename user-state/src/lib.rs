@@ -2,7 +2,6 @@ use std::{ops::Deref, pin::Pin, sync::Arc};
 mod abi;
 mod config;
 use anyhow::Result;
-use duckdb::{AccessMode, Config, Connection};
 use pb::User;
 pub mod pb;
 pub use config::AppConfig;
@@ -11,7 +10,6 @@ use pb::{
     QueryRequest, RawQueryRequest,
 };
 use sqlx::PgPool;
-use tokio::sync::Mutex;
 use tonic::{Request, Response, Status};
 #[derive(Clone)]
 pub struct UserStatsService {
@@ -21,18 +19,18 @@ pub struct UserStatsService {
 pub struct UserStateServiceInner {
     config: AppConfig,
     pool: PgPool,
-    duck: Mutex<Connection>,
+    // duck: Mutex<Connection>,
 }
 impl UserStatsService {
     pub async fn new(config: AppConfig) -> Result<Self> {
         let pool = PgPool::connect(&config.server.db_url).await?;
-        let duck_config = Config::default().access_mode(AccessMode::ReadWrite)?;
-        let duck = Connection::open_with_flags(&config.server.duck_db, duck_config)?;
+        // let duck_config = Config::default().access_mode(AccessMode::ReadWrite)?;
+        // let duck = Connection::open_with_flags(&config.server.duck_db, duck_config)?;
 
         let inner = UserStateServiceInner {
             config,
             pool,
-            duck: Mutex::new(duck),
+            // duck: Mutex::new(duck),
         };
         Ok(Self {
             inner: Arc::new(inner),
