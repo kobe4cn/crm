@@ -32,3 +32,4 @@ derive_builder = "0.20.2"
 serde_yaml = "0.9.34"
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+duckdb = { version = "1.1.1", features = ["bundled", "chrono", "serde_json"] }

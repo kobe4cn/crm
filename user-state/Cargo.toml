@@ -15,7 +15,7 @@ serde = { workspace = true }
 chrono = { workspace = true }
 rand = { workspace = true }
 nanoid = "0.4.0"
-duckdb = { version = "1.1.1", features = ["bundled", "chrono", "serde_json"] }
+duckdb = { workspace = true }
 serde_json = { workspace = true }
 futures = { workspace = true }
 derive = { workspace = true }
@@ -23,7 +23,6 @@ derive_builder = { workspace = true }
 serde_yaml = { workspace = true }
 tracing = { workspace = true }
 tracing-subscriber = { workspace = true }
-dashmap = "6.1.0"
 
 [build-dependencies]
 anyhow = { workspace = true }
