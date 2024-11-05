@@ -19,6 +19,8 @@ impl MetaDataService {
         &self,
         mut stream: impl Stream<Item = Result<MaterializeRequest, Status>> + Send + 'static + Unpin,
     ) -> ServiceResult<ResponseStream> {
+        //使用mpsc通过发送数据，tx负责往通道发送数据，ReceiverStream::new 将rx进行包装之后再使用Box::pin进行包装，返回客户端。
+        //客户段 stream.next().await Ok(rx) 获取到rx，然后进行数据的接收
         let (tx, rx) = tokio::sync::mpsc::channel(1024);
         tokio::spawn(async move {
             while let Some(req) = stream.next().await {
