@@ -1,0 +1,6 @@
+syntax="proto3";
+package crm_metadata;
+import "crm_metadata/messages.proto";
+service Metadata {
+    rpc Materialize(stream MaterializeRequest) returns (stream Content);
+}

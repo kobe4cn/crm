@@ -630,6 +630,7 @@ dependencies = [
  "serde_yaml",
  "sqlx",
  "tokio",
+ "tokio-stream",
  "tonic",
  "tonic-build",
  "tracing",
@@ -891,6 +892,7 @@ dependencies = [
  "deunicode",
  "dummy",
  "rand",
+ "url",
 ]
 
 [[package]]

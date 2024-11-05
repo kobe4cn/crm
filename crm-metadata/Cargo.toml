@@ -13,7 +13,7 @@ sqlx = { workspace = true }
 tokio = { workspace = true }
 serde = { workspace = true }
 chrono = { workspace = true }
-rand = { workspace = true }
+rand.workspace = true
 nanoid = "0.4.0"
 duckdb = { workspace = true }
 serde_json = { workspace = true }
@@ -23,11 +23,11 @@ derive_builder = { workspace = true }
 serde_yaml = { workspace = true }
 tracing = { workspace = true }
 tracing-subscriber = { workspace = true }
-
+fake = { version = "3.0.0", features = ["derive", "chrono", "url"] }
+tokio-stream = "0.1.16"
 [build-dependencies]
 anyhow = { workspace = true }
 tonic-build = { workspace = true }
 proto-builder-trait = "0.6.2"
 
 [dev-dependencies]
-fake = { version = "3.0.0", features = ["derive", "chrono"] }

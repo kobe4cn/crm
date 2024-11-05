@@ -1,0 +1,10 @@
+server:
+  port: 50052
+  # host:
+  db_url: postgres://postgres:postgres@localhost:5432/state
+  duck_db: state.db
+auth:
+  pk: |
+    -----BEGIN PUBLIC KEY-----
+    MCowBQYDK2VwAyEAXb0Hfuxwr6GN5eMHesm5LmYGATOArNiN7JYQOiDhVag=
+    -----END PUBLIC KEY-----
