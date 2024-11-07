@@ -1,3 +1,4 @@
 crm/src/pb
 user-state/src/pb
 crm-metadata/src/pb
+notification/src/pb

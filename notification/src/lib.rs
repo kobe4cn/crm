@@ -5,7 +5,10 @@ mod abi;
 
 pub use config::AppConfig;
 use futures::Stream;
-use pb::{notification_server::Notification, send_request::Msg, SendRequest, SendResponse};
+pub use pb::{
+    notification_server::Notification, send_request::Msg, EmailMessage, InAppMessage, SendRequest,
+    SendResponse, SmsMessage,
+};
 use tokio::sync::mpsc;
 use tonic::{Request, Response, Status, Streaming};
 

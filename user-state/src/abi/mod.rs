@@ -26,7 +26,6 @@ impl UserStatsService {
             .join(" ");
         sql.push_str(&id_conditions);
 
-        println!("Generated SQL: {}", sql);
         // Implement your logic here
         self.raw_query(RawQueryRequest { query: sql }).await
     }

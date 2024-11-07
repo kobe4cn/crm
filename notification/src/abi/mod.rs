@@ -124,19 +124,18 @@ impl Sender for InAppMessage {
 
 #[cfg(test)]
 mod tests {
-
     use anyhow::Result;
     use fake::{
         faker::{internet::en::SafeEmail, phone_number::ar_sa::PhoneNumber},
         Fake,
     };
-    use futures::StreamExt;
-    use uuid::Uuid;
 
     use crate::{
         pb::{send_request::Msg, EmailMessage, InAppMessage, SendRequest, SmsMessage},
         AppConfig, NotificationService,
     };
+    use futures::StreamExt;
+    use uuid::Uuid;
 
     impl EmailMessage {
         fn fake() -> Self {
@@ -148,11 +147,6 @@ mod tests {
                 subject: "Hello".to_string(),
                 body: "Hello".to_string(),
             }
-        }
-    }
-    impl From<EmailMessage> for Msg {
-        fn from(email: EmailMessage) -> Self {
-            Msg::Email(email)
         }
     }
 
@@ -179,7 +173,6 @@ mod tests {
             }
         }
     }
-
     #[tokio::test]
     async fn send_should_work() -> Result<()> {
         let service = NotificationService::new(AppConfig::try_load()?);

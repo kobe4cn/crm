@@ -13,7 +13,7 @@ async fn main() -> Result<()> {
     let layer = Layer::new().with_filter(LevelFilter::INFO);
     tracing_subscriber::registry().with(layer).init();
     let config = AppConfig::try_load().context("load config failed")?;
-    let addr = format!("[::1]:{}", &config.server.port).parse().unwrap();
+    let addr: std::net::SocketAddr = format!("[::1]:{}", &config.server.port).parse().unwrap();
     let service = UserStatsService::new(config).await?.into_server();
 
     info!("UserStatsService listening on {}", addr);
