@@ -12,7 +12,7 @@ async fn main() -> Result<()> {
     tracing_subscriber::registry().with(layer).init();
     let config = AppConfig::try_load()?;
 
-    let addr = format!("[::1]:{}", &config.server.port).parse().unwrap();
+    let addr = format!("[::]:{}", &config.server.port).parse().unwrap();
     info!("Starting CRM server at {}", addr);
 
     let svc = CrmService::try_new(config).await?.into_server();
