@@ -18,7 +18,7 @@ use user_state::{
 
 #[tokio::test]
 async fn raw_query_should_work() -> Result<()> {
-    let addr = start_server(50052).await?;
+    let addr = start_server(50058).await?;
     //addr to url
     let addr = format!("http://{}", addr);
     println!("addr: {}", addr);
@@ -54,7 +54,7 @@ async fn start_server(port: u32) -> Result<SocketAddr> {
 
 #[tokio::test]
 async fn query_should_work() -> Result<()> {
-    let addr = start_server(50051).await?;
+    let addr = start_server(50057).await?;
     let addr = format!("http://{}", addr);
     let mut client = UserStatsClient::connect(addr).await?;
     let query = QueryRequestBuilder::default()

@@ -37,7 +37,7 @@ pub struct Publisher {
     #[prost(string, tag = "3")]
     pub avatar: ::prost::alloc::string::String,
 }
-#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+#[derive(Eq, Hash, Clone, Copy, PartialEq, ::prost::Message)]
 pub struct MaterializeRequest {
     #[prost(uint32, tag = "1")]
     pub id: u32,

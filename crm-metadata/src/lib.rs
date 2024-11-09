@@ -1,6 +1,7 @@
 mod abi;
 mod config;
 pub mod pb;
+pub use abi::*;
 pub use config::AppConfig;
 use futures::Stream;
 use pb::{

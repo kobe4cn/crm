@@ -8,14 +8,9 @@ fn main() -> Result<()> {
     let builder = tonic_build::configure();
     builder
         .out_dir("src/pb")
-        // .with_serde(
-        //     &["Content", "Publisher", "ContentType"],
-        //     true,
-        //     true,
-        //     Some(&[r#"#[serde(rename_all = "camelCase")]"#]),
-        // )
         .with_derive_builder(&["Content", "Publisher"], None)
         .with_sqlx_from_row(&["Content"], None)
+        .with_type_attributes(&["MaterializeRequest"], &[r#"#[derive(Eq, Hash)]"#])
         .compile_protos(
             &[
                 "../protos/crm_metadata/messages.proto",

@@ -13,7 +13,7 @@ async fn main() -> Result<()> {
     let config = AppConfig::try_load().context("load config failed")?;
     let addr = format!("[::1]:{}", &config.server.port).parse().unwrap();
     let svc = crm_metadata::MetaDataService::new(config).into_server();
-    info!("UserStatsService listening on {}", addr);
+    info!("MetadataService listening on {}", addr);
     Server::builder().add_service(svc).serve(addr).await?;
     Ok(())
 }

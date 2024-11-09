@@ -11,7 +11,7 @@ use pb::{
 };
 use sqlx::PgPool;
 use tonic::{Request, Response, Status};
-#[derive(Clone)]
+
 pub struct UserStatsService {
     inner: Arc<UserStateServiceInner>,
 }

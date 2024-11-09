@@ -1,0 +1,13 @@
+server:
+  port: 50000
+  db_url: postgres://postgres:postgres@localhost:5432/state
+  sender_email: test@test.com
+  duck_db: state.db
+  metadata: http://localhost:50052
+  notification: http://localhost:50053
+  user_stats: http://localhost:50051
+auth:
+  pk: |
+    -----BEGIN PUBLIC KEY-----
+    MCowBQYDK2VwAyEAXb0Hfuxwr6GN5eMHesm5LmYGATOArNiN7JYQOiDhVag=
+    -----END PUBLIC KEY-----

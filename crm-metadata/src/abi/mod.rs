@@ -1,4 +1,5 @@
 use chrono::{DateTime, Days, Utc};
+
 use fake::{
     faker::{lorem::zh_cn::Sentence, name::zh_cn::Name},
     Fake, Faker,
@@ -63,6 +64,16 @@ impl Content {
             likes: rng.gen_range(123333..12313213213),
             dislikes: rng.gen_range(121313..131212121121),
         }
+    }
+    pub fn content_body(&self) -> String {
+        format!("Content: {:?}", self)
+    }
+}
+
+pub struct Tpl<'a>(pub &'a [Content]);
+impl<'a> Tpl<'a> {
+    pub fn to_body(&self) -> String {
+        format!("Tpl: {:?}", self.0)
     }
 }
 impl Publisher {
