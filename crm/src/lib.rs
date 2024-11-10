@@ -56,10 +56,10 @@ impl Crm for CrmService {
     async fn welcome(&self, request: Request<WelcomeRequest>) -> ServiceResult<WelcomeResponse> {
         self.welcome(request.into_inner()).await
     }
-    async fn recall(&self, _request: Request<RecallRequest>) -> ServiceResult<RecallResponse> {
-        todo!()
+    async fn recall(&self, request: Request<RecallRequest>) -> ServiceResult<RecallResponse> {
+        self.recall(request.into_inner()).await
     }
-    async fn remind(&self, _request: Request<RemindRequest>) -> ServiceResult<RemindResponse> {
-        todo!()
+    async fn remind(&self, request: Request<RemindRequest>) -> ServiceResult<RemindResponse> {
+        self.remind(request.into_inner()).await
     }
 }

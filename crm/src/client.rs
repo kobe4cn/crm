@@ -2,7 +2,9 @@ use std::mem;
 
 use anyhow::Result;
 use crm::{
-    pb::{crm_client::CrmClient, WelcomeRequestBuilder},
+    pb::{
+        crm_client::CrmClient, RecallRequestBuilder, RemindRequestBuilder, WelcomeRequestBuilder,
+    },
     AppConfig,
 };
 use tonic::{
@@ -31,6 +33,15 @@ async fn main() -> Result<()> {
         .interval(90u32)
         .content_ids(vec![1, 2, 3])
         .build()?;
+    let recall_request = RecallRequestBuilder::default()
+        .id(Uuid::new_v4().to_string())
+        .last_visit_interval(90u32)
+        .content_ids(vec![1, 2, 3])
+        .build()?;
+    let remind_request = RemindRequestBuilder::default()
+        .id(Uuid::new_v4().to_string())
+        .last_visit_interval(90u32)
+        .build()?;
     if let Some(tls) = tls {
         //mkcert -CAROOT ca查询
         let ca = Certificate::from_pem(tls.ca);
@@ -47,11 +58,19 @@ async fn main() -> Result<()> {
             Ok(req)
         });
         let response = svc.welcome(request).await?.into_inner();
+        let recall_response = svc.recall(recall_request).await?.into_inner();
+        let remind_response = svc.remind(remind_request).await?.into_inner();
         println!("RESPONSE={:?}", response);
+        println!("RECALL_RESPONSE={:?}", recall_response);
+        println!("REMIND_RESPONSE={:?}", remind_response);
     } else {
         let mut svc = CrmClient::connect(addr).await?;
         let response = svc.welcome(request).await?.into_inner();
+        let recall_response = svc.recall(recall_request).await?.into_inner();
+        let remind_response = svc.remind(remind_request).await?.into_inner();
         println!("RESPONSE={:?}", response);
+        println!("RECALL_RESPONSE={:?}", recall_response);
+        println!("REMIND_RESPONSE={:?}", remind_response);
     }
 
     // let addr = "http://localhost:8080";

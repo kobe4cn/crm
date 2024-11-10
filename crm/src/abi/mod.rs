@@ -1,6 +1,9 @@
 mod auth;
 use crate::{
-    pb::{WelcomeRequest, WelcomeResponse},
+    pb::{
+        RecallRequest, RecallResponse, RemindRequest, RemindResponse, WelcomeRequest,
+        WelcomeResponse,
+    },
     CrmService,
 };
 use anyhow::Result;
@@ -94,6 +97,109 @@ impl CrmService {
         notification.send(req).await?;
 
         let ret = WelcomeResponse { id: request_id };
+        Ok(Response::new(ret))
+    }
+
+    pub async fn recall(&self, request: RecallRequest) -> Result<Response<RecallResponse>, Status> {
+        //找到last_vistied 多久之前的人，发送相关的contents recall
+        let request_id = request.id.clone();
+        let last_visited = request.last_visit_interval;
+        let date = Utc::now() - Duration::days(last_visited as _);
+        let query = QueryRequestBuilder::default()
+            .timestamp((
+                "last_visited_at".to_string(),
+                TimeQuery {
+                    before: Some(Timestamp {
+                        seconds: date.timestamp(),
+                        nanos: date.timestamp_subsec_nanos() as _,
+                    }),
+                    after: Some(Timestamp {
+                        seconds: date.timestamp(),
+                        nanos: date.timestamp_subsec_nanos() as _,
+                    }),
+                },
+            ))
+            .build()
+            .map_err(|e| Status::internal(e.to_string()))?;
+        let user_res = self.user_state.clone().query(query).await?;
+        let mut user_stream = user_res.into_inner();
+        let content_ids = request.content_ids.clone();
+        let metarequest: HashSet<_> = content_ids
+            .iter()
+            .map(|x| MaterializeRequest { id: *x })
+            .collect();
+        let request_stream = tokio_stream::iter(metarequest.into_iter());
+
+        let request = Request::new(request_stream);
+        let meta_res = self.metadata.clone().materialize(request).await?;
+        let meta_stream = meta_res.into_inner();
+        let contents = meta_stream
+            .try_collect::<Vec<_>>()
+            .await
+            .map_err(|e| Status::internal(e.to_string()))?;
+        let mut notification = self.notification.clone();
+        let (tx, rx) = mpsc::channel(1024);
+        let sender_email = self.config.server.sender_email.clone();
+        tokio::spawn(async move {
+            while let Some(Ok(user)) = user_stream.next().await {
+                let req =
+                    gen_send_request("Recall".to_string(), sender_email.clone(), user, &contents);
+                if let Err(e) = tx.send(req).await {
+                    warn!("Failed to send message: {:?}", e);
+                };
+            }
+        });
+
+        let req = ReceiverStream::new(rx);
+        notification.send(req).await?;
+        let ret = RecallResponse { id: request_id };
+        Ok(Response::new(ret))
+    }
+    pub async fn remind(&self, request: RemindRequest) -> Result<Response<RemindResponse>, Status> {
+        let request_id = request.id.clone();
+        let remind_interval = request.last_visit_interval;
+        let date = Utc::now() - Duration::days(remind_interval as _);
+        let query = QueryRequestBuilder::default()
+            .timestamp((
+                "last_visited_at".to_string(),
+                TimeQuery {
+                    before: Some(Timestamp {
+                        seconds: date.timestamp(),
+                        nanos: date.timestamp_subsec_nanos() as _,
+                    }),
+                    after: Some(Timestamp {
+                        seconds: date.timestamp(),
+                        nanos: date.timestamp_subsec_nanos() as _,
+                    }),
+                },
+            ))
+            .build()
+            .map_err(|e| Status::internal(e.to_string()))?;
+        let user_res = self.user_state.clone().query(query).await?;
+        let mut user_stream = user_res.into_inner();
+        let (tx, rx) = mpsc::channel(1024);
+        let sender_email = self.config.server.sender_email.clone();
+        let mut notification = self.notification.clone();
+        tokio::spawn(async move {
+            while let Some(Ok(user)) = user_stream.next().await {
+                let req =SendRequest {
+                    msg: Some(Msg::Email(EmailMessage {
+                        message_id: Uuid::new_v4().to_string(),
+                        sender:sender_email.clone(),
+                        recipients: user.email,
+                        subject:"Remind!!!".to_string(),
+                        body: "Hope you could be well! There were more contents start but not finished. Wecome Back to us".to_string(),
+                    })),
+                };
+
+                if let Err(e) = tx.send(req).await {
+                    warn!("Failed to send message: {:?}", e);
+                };
+            }
+        });
+        let rec = ReceiverStream::new(rx);
+        notification.send(rec).await?;
+        let ret = RemindResponse { id: request_id };
         Ok(Response::new(ret))
     }
 }
