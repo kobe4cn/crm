@@ -1,12 +1,17 @@
-use anyhow::Result;
+use abi::DecodingKey;
+use anyhow::{Ok, Result};
 
 use crm_metadata::pb::metadata_client::MetadataClient;
+
 use notification::pb::notification_client::NotificationClient;
 use pb::{
     crm_server::{Crm, CrmServer},
     RecallRequest, RecallResponse, RemindRequest, RemindResponse, WelcomeRequest, WelcomeResponse,
 };
-use tonic::{async_trait, transport::Channel, Request, Response, Status};
+use tonic::{
+    async_trait, service::interceptor::InterceptedService, transport::Channel, Request, Response,
+    Status,
+};
 use user_state::pb::user_stats_client::UserStatsClient;
 mod abi;
 
@@ -34,8 +39,13 @@ impl CrmService {
             metadata,
         })
     }
-    pub fn into_server(self) -> CrmServer<Self> {
-        CrmServer::new(self)
+    pub fn into_server(self) -> Result<InterceptedService<CrmServer<CrmService>, DecodingKey>> {
+        let dk = DecodingKey::load(&self.config.auth.pk)?;
+        let svc: tonic::service::interceptor::InterceptedService<
+            CrmServer<CrmService>,
+            DecodingKey,
+        > = CrmServer::with_interceptor(self, dk);
+        Ok(svc)
     }
 }
 

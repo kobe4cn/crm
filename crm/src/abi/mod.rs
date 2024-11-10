@@ -1,10 +1,10 @@
-use std::collections::HashSet;
-
+mod auth;
 use crate::{
     pb::{WelcomeRequest, WelcomeResponse},
     CrmService,
 };
 use anyhow::Result;
+pub use auth::DecodingKey;
 use chrono::{Duration, Utc};
 use crm_metadata::{
     pb::{Content, MaterializeRequest},
@@ -13,6 +13,7 @@ use crm_metadata::{
 use futures::{StreamExt, TryStreamExt};
 use notification::{EmailMessage, Msg, SendRequest};
 use prost_types::Timestamp;
+use std::collections::HashSet;
 
 use tokio::sync::mpsc;
 use tokio_stream::wrappers::ReceiverStream;

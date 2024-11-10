@@ -19,7 +19,7 @@ async fn main() -> Result<()> {
     let addr = format!("[::]:{}", &config.server.port).parse().unwrap();
     info!("Starting CRM server at {}", addr);
     let tls = mem::take(&mut config.server.tls);
-    let svc = CrmService::try_new(config).await?.into_server();
+    let svc = CrmService::try_new(config).await?.into_server()?;
     if let Some(tls) = tls {
         let identity = Identity::from_pem(tls.cert, tls.key);
         tonic::transport::Server::builder()

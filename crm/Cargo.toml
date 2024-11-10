@@ -37,6 +37,7 @@ user-state = { version = "0.1.0", path = "../user-state" }
 crm-metadata = { version = "0.1.0", path = "../crm-metadata" }
 notification = { version = "0.1.0", path = "../notification" }
 uuid = { version = "1.11.0", features = ["v4", "serde"] }
+jwt-simple = "0.12.10"
 [build-dependencies]
 anyhow = { workspace = true }
 tonic-build = { workspace = true }
